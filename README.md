@@ -26,7 +26,7 @@ A genome assembly pipeline combining short-read (Illumina) and long-read (Nanopo
 - Conda 4.5 (or later, optional)
 # Quick Start
 ```
-nextflow run main.nf \
+nextflow run genome_assembling.nf \
     --read1 reads_R1.fastq.gz \
     --read2 reads_R2.fastq.gz \
     --read_long nanopore_reads.fastq \
