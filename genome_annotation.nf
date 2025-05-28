@@ -98,7 +98,7 @@ process structural_annotation {
         script:
         """
 	mkdir structural_annotation
-	GeMoMa GeMoMaPipeline -Xmx50G threads=32 AnnotationFinalizer.r=NO o=true t=${genome} outdir=structural_annotation  a=${params.ncbi_gff} g=${params.ncbi_genomic_fna} 
+	GeMoMa GeMoMaPipeline -Xmx50G threads=32 AnnotationFinalizer.r=NO o=true t=${genome} outdir=structural_annotation  a=${params.ncbi_gff} g=${params.ncbi_genomic_fna} r=MAPPED ERE.m=${RNA_bam}
         """
 }
 	
