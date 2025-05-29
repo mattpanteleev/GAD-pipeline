@@ -6,13 +6,9 @@ params.outdir  = './results_counts'
 
 process fastqc {
 	container 'biocontainers/fastqc:v0.11.9_cv8'
-	tag "FASTQC: $read_name"
-
 	publishDir "${params.outdir}/fastqc", mode: 'copy'
-
 	input:
 	path read
-
 	output:
 	path("*_fastqc.{html,zip}"), emit: qc_reports
 	script:
@@ -23,10 +19,8 @@ process fastqc {
 process fastp {
 	container 'nanozoo/fastp:0.23.1--9f2e255'
         publishDir "${params.outdir}/fastp", mode: 'copy'
-
         input:
         tuple path(read1), path(read2)
-
         output:
         path("trimmed_*"), emit: fastp_result
 	path("reports/*"), emit: report
@@ -46,10 +40,8 @@ process fastp {
 process fastqc_new {
         container 'biocontainers/fastqc:v0.11.9_cv8'
         publishDir "${params.outdir}/fastqc", mode: 'copy'
-
         input:
         path read
-
         output:
         path("*_fastqc.{html,zip}"), emit: qc_reports
         script:
