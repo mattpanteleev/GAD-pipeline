@@ -1,21 +1,16 @@
 params.genome_fasta = ''
 params.read1 = ''
 params.read2 = ''
-params.rrna_ref = ''
-params.ncbi_gff = '/home/genomic/pipline/annotation/GCF_000146045.2_R64_genomic.gff'
-params.ncbi_genomic_fna = '/home/genomic/pipline/annotation/ncbi/GCF_000146045.2_R64_genomic.fna'
+params.ncbi_gff = ''
+params.ncbi_genomic_fna = ''
 params.uniprot_db = ''
 params.outdir  = './results_annotation'
 
 process fastqc {
 	container 'biocontainers/fastqc:v0.11.9_cv8'
-	tag "FASTQC: $read_name"
-
 	publishDir "${params.outdir}/fastqc", mode: 'copy'
-
 	input:
 	path read
-
 	output:
 	path("*_fastqc.{html,zip}"), emit: qc_reports
 	script:
@@ -25,11 +20,8 @@ process fastqc {
 }
 process fastp {
 	container 'nanozoo/fastp:0.23.1--9f2e255'
-        publishDir "${params.outdir}/fastp", mode: 'copy'
-
         input:
         tuple path(read1), path(read2)
-
         output:
         path("trimmed_*"), emit: fastp_result
 	path("reports/*"), emit: report
@@ -49,12 +41,9 @@ process fastp {
 process fastqc_new {
         container 'biocontainers/fastqc:v0.11.9_cv8'
         tag "FASTQC: $read_name"
-
         publishDir "${params.outdir}/fastqc", mode: 'copy'
-
         input:
         path read
-
         output:
         path("*_fastqc.{html,zip}"), emit: qc_reports
         script:
@@ -102,6 +91,40 @@ process structural_annotation {
         """
 }
 	
+process merge_blast {
+        container 'quay.io/biocontainers/agat:1.4.2--pl5321hdfd78af_0'
+        publishDir "${params.outdir}/merge_blast", mode: 'copy'
+        input:
+        path annotation_file
+        path blast_out
+        path uniprot
+        output:
+        path("annotations_with_names")
+        path("annotations_with_names/final_annotation.gff"), emit: final_annotation
+        script:
+        """
+        agat_sp_manage_functional_annotation.pl -f $annotation_file  -b $blast_out -d $uniprot -o annotations_with_names
+        """
+}
+process add_gene_names {
+    publishDir "${params.outdir}/final_result", mode: 'copy'
+    input:
+    path final_annotation
+    output:
+    path("final_version_annotation.gff")
+    script:
+    """
+    awk -F'\t' -v OFS='\t' '
+        BEGIN { counter=1 }
+        {
+            if (\$3 == "gene" && \$9 !~ /Name=/) {
+                \$9 = \$9 ";Name=test" counter++;
+            }
+            print \$0
+        }
+    ' ${final_annotation} > final_version_annotation.gff
+    """
+}
 
 workflow {
 	if( !params.read1 || !params.read2 ) {
@@ -120,5 +143,13 @@ workflow {
 	bam_ch = alignment.out.bam
 	structural_annotation_input = genome_ch.combine(bam_ch)
 
-	structural_annotation(structural_annotation_input)
+        structural_annotation(structural_annotation_input)
+
+        blast(structural_annotation.out.proteins)
+        annotation = structural_annotation.out.annotation
+        blast_out = blast.out
+        uniprot_ch = Channel.fromPath(params.uniprot_db, checkIfExists: true)
+
+        merge_blast( structural_annotation.out.annotation, blast_out[0], uniprot_ch )
+        add_gene_names(merge_blast.out.final_annotation)
 }
