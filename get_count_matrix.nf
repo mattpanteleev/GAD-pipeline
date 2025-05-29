@@ -76,6 +76,21 @@ process alignment {
 	STAR --genomeDir  $idx  --readFilesIn $read1 $read2 --outSAMstrandField intronMotif --readFilesCommand zcat --outFileNamePrefix annotation_BAM/ --limitBAMsortRAM 1512109491 --runThreadN 32 --outSAMtype BAM SortedByCoordinate 
         """
 }
+process featureCounts {
+        container 'quay.io/biocontainers/subread:2.1.1--h577a1d6_0'
+        publishDir "${params.outdir}/final_counts", mode: 'copy'
+        input:
+        path annotation
+        path bam
+        output:
+        path("results.txt"), emit: bam
+        script:
+        """
+        featureCounts -a $annotation -o results.txt -p  -T 8 -t gene -g Name $bam
+
+        """
+
+}
 
 
 
@@ -93,5 +108,6 @@ workflow {
 	genome_ch = Channel.fromPath(params.genome_fasta, checkIfExists: true)
 	alignment_idx(genome_ch, annotation_ch)
 	alignment(fastp.out.fastp_result.combine(alignment_idx.out.idx))
+	featureCounts(annotation_ch, alignment.out.bam)
 
 }
