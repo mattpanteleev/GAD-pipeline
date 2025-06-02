@@ -23,8 +23,9 @@ A genome assembly pipeline combining short-read (Illumina) and long-read (Nanopo
 # Prerequisites 
 - Docker engine 1.10.x (or later)
 - Nextflow 22.10 (or later)
-- Conda 4.5 (or later, optional)
+- Conda 4.5 (or later)
 # Quick Start
+## Genome assembling
 ```
 nextflow run genome_assembling.nf \
     --read1 reads_R1.fastq.gz \
@@ -33,8 +34,8 @@ nextflow run genome_assembling.nf \
     --reference reference_genome.fasta \
     --outdir results
 ```
-## Input Parameters
-### Required:
+### Input Parameters
+**Required:**
 ```
 --read1              # Illumina R1 reads
 --read2              # Illumina R2 reads 
