@@ -42,7 +42,7 @@ nextflow run genome_assembling.nf \
 --read_long          # Nanopore reads
 --reference          # Reference genome
 ```
-### Optional:
+**Optional:**
 ```
 --outdir             # Output directory (default: results)
 --threads            # CPU threads (default: 4)
