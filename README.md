@@ -142,7 +142,7 @@ nextflow run get_count_matrix.nf \
 **Optional:**
 ```
 --outdir             # Output directory (default: results)
---threads            # CPU threads (default: 4)
+--threads            # CPU threads (default: 8)
 ```
 2. Run the R Script:
 Using output of featureCount for control and case conditions:
