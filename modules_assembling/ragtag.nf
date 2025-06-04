@@ -9,7 +9,7 @@ process ragtag {
         stdout
         script:
         """
-        ragtag.py scaffold  $reference $assembly -o scaffold -t 30
+        ragtag.py scaffold  $reference $assembly -o scaffold -t ${params.threads}
         """
 }
 
