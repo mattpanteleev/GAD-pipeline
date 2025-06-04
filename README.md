@@ -9,6 +9,8 @@ This tool consists of 3 pipelines:
 - Differential Expression Analysis
 ## Genome Assembly and Quality Control Pipeline
 A genome assembly pipeline combining short-read (Illumina) and long-read (Nanopore) sequencing data with quality control steps and scaffolding.
+The genome assembling pipeline:
+![]((https://github.com/mattpanteleev/GAD-pipeline/blob/main/plots/genome%20assembling.png))
 ### Trimming:
 - Short-read with FastP
 - Long-read with Chopper and Porechop
