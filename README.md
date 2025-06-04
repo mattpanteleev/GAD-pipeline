@@ -30,17 +30,29 @@ The genome annotation pipeline:
 ![](https://github.com/mattpanteleev/GAD-pipeline/blob/main/plots/genome%20annotation.png)
 
 ### Quality Control and Trimming:
-- FastQC for initial read quality assessment.
-- Fastp for read trimming and filtering.
-- FastQC (post-trimming) for quality re-evaluation.
+- FastQC for initial read quality assessment
+- Fastp for read trimming and filtering
+- FastQC (post-trimming) for quality re-evaluation
 ### Alignment:
-- STAR for genome indexing and RNA-seq read alignment.
+- STAR for genome indexing and RNA-seq read alignment
 ### Structural Annotation:
-- GeMoMa for gene prediction using homology and RNA-seq evidence.
+- GeMoMa for gene prediction using homology and RNA-seq evidence
 ### Functional Annotation:
-- AGAT for merging functional annotations (BLAST results + UniProt).
-- Gene naming and final GFF file generation.
+- AGAT for merging functional annotations (BLAST results + UniProt)
+- Gene naming and final GFF file generation
 
+## RNA-Seq Analysis Pipeline
+This Nextflow pipeline performs RNA-Seq data analysis, including quality control, read trimming, alignment, and gene-level quantification.
+
+**Pipeline Overview**
+### Quality Control:
+Initial and post-trimming QC reports using FastQC
+### Read Trimming 
+Adapter trimming, poly-G/X trimming, and quality filtering using fastp
+### Alignment 
+Genome indexing and alignment to a reference genome using STAR
+### Quantification 
+Gene-level read counting using featureCounts 
 
 
 
@@ -93,6 +105,29 @@ nextflow run main.nf \
 --ncbi_gff				# Reference GFF file (for GeMoMa)
 --ncbi_genomic_fna		# Reference genomic FASTA (for GeMoMa)
 --uniprot_db			# UniProt database (for functional annotation)
+```
+**Optional:**
+```
+--outdir             # Output directory (default: results)
+--threads            # CPU threads (default: 4)
+```
+
+## RNA-Seq Analysis
+```
+nextflow run main.nf \
+  --genome_fasta genome.fa \
+  --genome_gff annotation.gff \
+  --read1 RNA_reads_R1.fastq.gz \
+  --read2 RNA_reads_R2.fastq.gz \
+  --outdir ./results
+```
+### Input Parameters
+**Required:**
+```
+--genome_fasta			# the novel genome from the previous step (FASTA)
+--genome_gff			# the novel genome annotation from the previous step (GFF)
+--read1					# Forward reads (FASTQ)	
+--read2					# Reverse reads (FASTQ)
 ```
 **Optional:**
 ```
