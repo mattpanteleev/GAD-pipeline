@@ -8,7 +8,7 @@ process porechop {
 	script:
 	"""
 	mkdir porechop_output
-	porechop -i $read -o porechop_output/pore_$read --format fastq.gz -t 12
+	porechop -i $read -o porechop_output/pore_$read --format fastq.gz -t ${params.threads}
 	"""
 }
 
