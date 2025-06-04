@@ -33,8 +33,8 @@ process softmasking {
         script:
         """
         BuildDatabase -name ${genome}_lib $genome
-        RepeatModeler -database ${genome}_lib -threads 20 -LTRStruct
-        RepeatMasker -lib ${genome}_lib-families.fa  -dir softmasking -xsmall pa 4 -a $genome
+        RepeatModeler -database ${genome}_lib -threads ${params.threads} -LTRStruct
+        RepeatMasker -lib ${genome}_lib-families.fa  -dir softmasking -xsmall pa 2 -a $genome
         mkdir -p  softmasking/softmasking_lib
         mv ${genome}_lib* softmasking/softmasking_lib
         """
