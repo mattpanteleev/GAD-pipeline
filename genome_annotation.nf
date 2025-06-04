@@ -5,6 +5,7 @@ params.ncbi_gff = ''
 params.ncbi_genomic_fna = ''
 params.uniprot_db = ''
 params.outdir  = './results_annotation'
+params.threads = 8
 
 process fastqc {
 	container 'biocontainers/fastqc:v0.11.9_cv8'
@@ -30,7 +31,7 @@ process fastp {
         """
 	mkdir reports
 	fastp -i $read1 -I $read2 -o trimmed_$read1 -O trimmed_$read2 \
-		--thread ${task.cpus} \
+		--thread ${params.threads} \
                 --html reports/after_fastp.html \
 		--trim_poly_g \
 		--trim_poly_x \
@@ -61,7 +62,7 @@ process alignment_idx  {
 	path("star_idx"), emit: idx
 	script:
 	"""
-	STAR --runMode genomeGenerate --genomeDir star_idx --genomeFastaFiles $genome_fasta --genomeSAindexNbases 10  --runThreadN 32
+	STAR --runMode genomeGenerate --genomeDir star_idx --genomeFastaFiles $genome_fasta --genomeSAindexNbases 10  --runThreadN ${params.threads}
 	"""
 }
 process alignment {
@@ -74,7 +75,7 @@ process alignment {
 	path("annotation_BAM/*bam"), emit: bam
         script:
         """
-	STAR --genomeDir  $idx  --readFilesIn $read1 $read2 --outSAMstrandField intronMotif --readFilesCommand zcat --outFileNamePrefix annotation_BAM/ --limitBAMsortRAM 1512109491 --runThreadN 32 --outSAMtype BAM SortedByCoordinate 
+	STAR --genomeDir  $idx  --readFilesIn $read1 $read2 --outSAMstrandField intronMotif --readFilesCommand zcat --outFileNamePrefix annotation_BAM/ --limitBAMsortRAM 1512109491 --runThreadN  ${params.threads} --outSAMtype BAM SortedByCoordinate 
         """
 }
 process structural_annotation {
@@ -87,7 +88,7 @@ process structural_annotation {
         script:
         """
 	mkdir structural_annotation
-	GeMoMa GeMoMaPipeline -Xmx50G threads=32 AnnotationFinalizer.r=NO o=true t=${genome} outdir=structural_annotation  a=${params.ncbi_gff} g=${params.ncbi_genomic_fna} r=MAPPED ERE.m=${RNA_bam}
+	GeMoMa GeMoMaPipeline -Xmx32G threads=${params.threads} AnnotationFinalizer.r=NO o=true t=${genome} outdir=structural_annotation  a=${params.ncbi_gff} g=${params.ncbi_genomic_fna} r=MAPPED ERE.m=${RNA_bam}
         """
 }
 	
