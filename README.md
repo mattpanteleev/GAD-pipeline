@@ -23,6 +23,27 @@ The genome assembling pipeline:
 - Polishing with Hypo (short reads)
 - Reference-based scaffolding with Ragtag
 
+## Genome Annotation Pipeline
+This Nextflow pipeline performs genome annotation using RNA-seq data, combining structural and functional annotation steps. It processes raw reads, aligns them to a reference genome, predicts gene structures, and integrates functional information from BLAST results and UniProt databases.
+
+The genome assembling pipeline:
+![](https://github.com/mattpanteleev/GAD-pipeline/blob/main/plots/genome%20assembling.png)
+
+### Quality Control and Trimming:
+- FastQC for initial read quality assessment.
+- Fastp for read trimming and filtering.
+- FastQC (post-trimming) for quality re-evaluation.
+### Alignment:
+- STAR for genome indexing and RNA-seq read alignment.
+### Structural Annotation:
+- GeMoMa for gene prediction using homology and RNA-seq evidence.
+### Functional Annotation:
+- AGAT for merging functional annotations (BLAST results + UniProt).
+- Gene naming and final GFF file generation.
+
+
+
+
 # Prerequisites 
 - Docker engine 1.10.x (or later)
 - Nextflow 22.10 (or later)
