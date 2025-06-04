@@ -8,6 +8,6 @@ process flye {
 	path("assembly_fly/*.fasta"), emit: result
 	script:
 	"""
-	flye --nano-corr $read --out-dir assembly_fly --threads 12 -i 3 
+	flye --nano-corr $read --out-dir assembly_fly --threads ${params.threads} -i 3 
 	"""
 }
