@@ -26,8 +26,8 @@ The genome assembling pipeline:
 ## Genome Annotation Pipeline
 This Nextflow pipeline performs genome annotation using RNA-seq data, combining structural and functional annotation steps. It processes raw reads, aligns them to a reference genome, predicts gene structures, and integrates functional information from BLAST results and UniProt databases.
 
-The genome assembling pipeline:
-![](https://github.com/mattpanteleev/GAD-pipeline/blob/main/plots/genome%20assembling.png)
+The genome annotation pipeline:
+![](https://github.com/mattpanteleev/GAD-pipeline/blob/main/plots/genome%20annotation.png)
 
 ### Quality Control and Trimming:
 - FastQC for initial read quality assessment.
@@ -65,6 +65,34 @@ nextflow run genome_assembling.nf \
 --read2              # Illumina R2 reads 
 --read_long          # Nanopore reads
 --reference          # Reference genome
+```
+**Optional:**
+```
+--outdir             # Output directory (default: results)
+--threads            # CPU threads (default: 4)
+```
+
+## Genome annotation
+
+```
+nextflow run main.nf \
+    --genome_fasta genome.fa \
+    --read1 RNA_reads_R1.fastq.gz \
+    --read2 RNA_reads_R2.fastq.gz \
+    --ncbi_gff ref_genes.gff \
+    --ncbi_genomic_fna ref_genome.fna \
+    --uniprot_db uniprot_prot.fasta \
+    --outdir results
+```
+### Input Parameters
+**Required:**
+```
+--genome_fasta			# the novel genome from the previous step (FASTA)
+--read1					# Forward reads (FASTQ)	
+--read2					# Reverse reads (FASTQ)
+--ncbi_gff				# Reference GFF file (for GeMoMa)
+--ncbi_genomic_fna		# Reference genomic FASTA (for GeMoMa)
+--uniprot_db			# UniProt database (for functional annotation)
 ```
 **Optional:**
 ```
