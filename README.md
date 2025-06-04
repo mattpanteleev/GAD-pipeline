@@ -87,7 +87,7 @@ nextflow run genome_assembling.nf \
 ## Genome annotation
 
 ```
-nextflow run main.nf \
+nextflow run genome_annotation.nf \
     --genome_fasta genome.fa \
     --read1 RNA_reads_R1.fastq.gz \
     --read2 RNA_reads_R2.fastq.gz \
@@ -114,7 +114,7 @@ nextflow run main.nf \
 
 ## RNA-Seq Analysis
 ```
-nextflow run main.nf \
+nextflow run get_count_matrix.nf \
   --genome_fasta genome.fa \
   --genome_gff annotation.gff \
   --read1 RNA_reads_R1.fastq.gz \
