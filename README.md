@@ -118,7 +118,7 @@ nextflow run genome_annotation.nf \
 **Optional:**
 ```
 --outdir             # Output directory (default: results)
---threads            # CPU threads (default: 4)
+--threads            # CPU threads (default: 8)
 ```
 
 ## RNA-Seq Analysis
