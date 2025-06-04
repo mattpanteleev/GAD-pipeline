@@ -42,17 +42,26 @@ The genome annotation pipeline:
 - Gene naming and final GFF file generation
 
 ## RNA-Seq Analysis Pipeline
-This Nextflow pipeline performs RNA-Seq data analysis, including quality control, read trimming, alignment, and gene-level quantification.
-
+This Nextflow pipeline performs RNA-Seq data analysis, including quality control, read trimming, alignment, and gene-level quantification. After that R script performs
+differential expression (DE) analysis and enrichment analysis.
 **Pipeline Overview**
+
+1. Quality control, alignment, gene quantification steps:
 ### Quality Control:
 Initial and post-trimming QC reports using FastQC
-### Read Trimming 
+### Read Trimming:
 Adapter trimming, poly-G/X trimming, and quality filtering using fastp
-### Alignment 
+### Alignment:
 Genome indexing and alignment to a reference genome using STAR
-### Quantification 
+### Quantification:
 Gene-level read counting using featureCounts 
+
+2. R-Based Analysis:
+### Differential Expression: 
+edgeR (exactTest for low-replicate data)
+## Visualization: 
+Volcano plots and GO enrichment (up/downregulated pathways)
+
 
 
 
@@ -113,6 +122,7 @@ nextflow run genome_annotation.nf \
 ```
 
 ## RNA-Seq Analysis
+1. Run the Nextflow Pipeline
 ```
 nextflow run get_count_matrix.nf \
   --genome_fasta genome.fa \
@@ -134,3 +144,11 @@ nextflow run get_count_matrix.nf \
 --outdir             # Output directory (default: results)
 --threads            # CPU threads (default: 4)
 ```
+2. Run the R Script:
+Using output of featureCount for control and case conditions:
+```
+Rscript final_version_RNA_seq_edgeR.R
+```
+Ensure control_strain_gene_counts.txt and case_strain_gene_counts.txt are in the working directory or change names of variables in R file.
+
+
