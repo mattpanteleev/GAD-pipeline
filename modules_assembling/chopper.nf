@@ -8,6 +8,6 @@ process chopper {
 	script:
 	"""
 	mkdir chopper_output
-	gunzip -c $read | chopper -q 10 -l 100 --threads 8 | gzip > chopper_output/chop_$read
+	gunzip -c $read | chopper -q 10 -l 100 --threads ${params.threads} | gzip > chopper_output/chop_$read
 	"""
 }	
