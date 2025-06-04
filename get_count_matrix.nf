@@ -3,7 +3,7 @@ params.genome_gff = ''
 params.read1 = ''
 params.read2 = ''
 params.outdir  = './results_counts'
-
+params.threads = 8
 process fastqc {
 	container 'biocontainers/fastqc:v0.11.9_cv8'
 	publishDir "${params.outdir}/fastqc", mode: 'copy'
@@ -29,7 +29,7 @@ process fastp {
         """
 	mkdir reports
 	fastp -i $read1 -I $read2 -o trimmed_$read1 -O trimmed_$read2 \
-		--thread ${task.cpus} \
+		--thread ${params.threads} \
                 --html reports/after_fastp.html \
 		--trim_poly_g \
 		--trim_poly_x \
@@ -60,7 +60,7 @@ process alignment_idx  {
 	path("star_idx"), emit: idx
 	script:
 	"""
-	STAR --runMode genomeGenerate --genomeDir star_idx --genomeFastaFiles $genome_fasta --sjdbGTFfile $genome_gff --genomeSAindexNbases 10  --runThreadN 32
+	STAR --runMode genomeGenerate --genomeDir star_idx --genomeFastaFiles $genome_fasta --sjdbGTFfile $genome_gff --genomeSAindexNbases 10  --runThreadN ${params.threads}
 	"""
 }
 process alignment {
@@ -73,7 +73,7 @@ process alignment {
 	path("annotation_BAM/*bam"), emit: bam
         script:
         """
-	STAR --genomeDir  $idx  --readFilesIn $read1 $read2 --outSAMstrandField intronMotif --readFilesCommand zcat --outFileNamePrefix annotation_BAM/ --limitBAMsortRAM 1512109491 --runThreadN 32 --outSAMtype BAM SortedByCoordinate 
+	STAR --genomeDir  $idx  --readFilesIn $read1 $read2 --outSAMstrandField intronMotif --readFilesCommand zcat --outFileNamePrefix annotation_BAM/ --limitBAMsortRAM 1512109491 --runThreadN ${params.threads} --outSAMtype BAM SortedByCoordinate 
         """
 }
 process featureCounts {
@@ -86,7 +86,7 @@ process featureCounts {
         path("results.txt"), emit: bam
         script:
         """
-        featureCounts -a $annotation -o results.txt -p  -T 8 -t gene -g Name $bam
+        featureCounts -a $annotation -o results.txt -p  -T ${params.threads} -t gene -g Name $bam
 
         """
 
