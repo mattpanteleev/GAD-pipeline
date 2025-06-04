@@ -8,6 +8,6 @@ process getting_bam {
 	script: 
 	"""
 	bwa index -p ref_index $assembly
-	bwa mem -t 12 ref_index  $read1  $read2 | samtools sort -o short.bam
+	bwa mem -t ${params.threads} ref_index  $read1  $read2 | samtools sort -o short.bam
 	"""
 }
